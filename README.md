@@ -1,4 +1,4 @@
-# T2_EdD
+# Inverted_Index_Search
 
 Extrair arquivo manpages.zip para correto funcionamento do programa;
 
