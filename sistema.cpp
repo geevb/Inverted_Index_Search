@@ -7,8 +7,10 @@ void Sistema::preencherArvores() {
     struct dirent *ent;
     std::ifstream arquivo;
     std::string palavra;
+
+	std::string PATH = getPath();
     
-    dir = opendir ("manpages/");
+    dir = opendir (PATH.c_str());
     if (dir != NULL) {
         while ((ent = readdir (dir)) != NULL) {
         	// Remover extensão do arquivo manpage.
@@ -21,7 +23,7 @@ void Sistema::preencherArvores() {
                 arvoreB->insert(std::pair<std::string, std::string>(nomeComando, ent->d_name));
 
                 // Preenchendo Árvore secundária com as palavras de cada manpage.
-                std::string local_arquivo = "manpages/" + (std::string)ent->d_name;
+                std::string local_arquivo = PATH + (std::string)ent->d_name;
             	arquivo.open(local_arquivo);
             	if (!arquivo.is_open()) { std::cout << "Arquivo não foi aberto!"; exit(1); }
 
@@ -65,17 +67,20 @@ void Sistema::preencherArvores() {
 
 
 void Sistema::efetuarPesquisa() {
-	int resp = 0;
-	while (resp != 4) {
+	int resp;
+	while (true) {
 		resp = gui->perguntarTipoPesquisa();
 		if (resp == 4) { exit(0); } // Finalizar execução do programa.
-		if (resp == 3) { std::string palavra1 = gui->perguntarChavePesquisa(); std::string palavra2 = gui->perguntarSegundaChavePesquisa(); pesquisarChavesConjuntivas(palavra1, palavra2); } 
-			else {
+		if (resp == 3) { 
+			std::string palavra1 = gui->perguntarChavePesquisa(); 
+			std::string palavra2 = gui->perguntarSegundaChavePesquisa(); 
+			pesquisarChavesConjuntivas(palavra1, palavra2); 
+		} else {
 			std::string chave = gui->perguntarChavePesquisa();
-    		if (resp == 1) { pesquisarChavePrimaria(chave); }
-    		if (resp == 2) { pesquisarChaveSecundaria(chave); }
-    		}
+			if (resp == 1) { pesquisarChavePrimaria(chave); }
+			if (resp == 2) { pesquisarChaveSecundaria(chave); }
 		}
+	}
 }
 
 
@@ -87,7 +92,7 @@ void Sistema::pesquisarChavePrimaria(std::string chavePrimaria) {
 
 	while(getline(nome_arquivo, linha)) {
     	if (linha.find(chavePrimaria, 0) != std::string::npos) {
-        	std::string comando = "cat manpages/" + chavePrimaria + ".*";
+        	std::string comando = "cat " + getPath() + chavePrimaria + ".*";
         	std::cout << "ManPage de " << chavePrimaria << std::endl;
     		std::cout << "\n";
         	std::cout << system((comando).c_str()); //Comando CAT, caso exista mais de um comando com mesmo nome, será apresentado todos os arquivos.
@@ -117,6 +122,7 @@ void Sistema::pesquisarChaveSecundaria(std::string chaveSecundaria) {
     		}
 		}
 	}
+
 	nome_arquivo.close();
 	if (!achou_palavra) std::cout << "Palavra não encontrada! \n";
 }
@@ -160,7 +166,6 @@ void Sistema::pesquisarChavesConjuntivas(std::string palavraChave1, std::string 
 
 	// Printar na tela o conteúdo da terceira lista criada pela intersecção das duas outras listas.
 	for (auto n : palavras_iguais) { std::cout << n << std::endl; }
-
 }
 
 /*
@@ -238,6 +243,9 @@ void Sistema::escreverArquivoArvoreSecundaria(std::string nomeArquivo) {
         fclose(arquivo);
 }
 
+std::string Sistema::getPath() {
+	return FOLDER_PATH;
+}
 
 std::string Sistema::removerExtensao(const std::string& nomeArquivo) {
     std::size_t pontofinal = nomeArquivo.find_last_of(".");

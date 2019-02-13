@@ -25,6 +25,7 @@ class Sistema {
 	ArvorePrimaria *arvoreB = new ArvorePrimaria;
 	ArvoreSecundaria *arvoreBS = new ArvoreSecundaria;
 	Visao *gui = new Visao;
+	std::string FOLDER_PATH = "livros/";
  public:
 	void preencherArvores();
 	void efetuarPesquisa(); // Método p/ selecionar o tipo de Pesquisa.
@@ -33,6 +34,7 @@ class Sistema {
 	void pesquisarChavesConjuntivas(std::string palavraChave1, std::string palavraChave2);
 	void escreverArquivoArvorePrimaria(std::string nomeArquivo);
 	void escreverArquivoArvoreSecundaria(std::string nomeArquivo);
+	std::string getPath();
 	std::string removerExtensao(const std::string& pNomeArquivo);
 };
 
