@@ -17,6 +17,7 @@
 #include <list>
 #include <iterator>
 #include <limits>
+#include <ctime>
 
 typedef btree::btree_map<std::string, std::string> ArvorePrimaria;
 typedef btree::btree_map< std::string, std::list<std::string> > ArvoreSecundaria;
@@ -25,7 +26,7 @@ class Sistema {
 	ArvorePrimaria *arvoreB = new ArvorePrimaria;
 	ArvoreSecundaria *arvoreBS = new ArvoreSecundaria;
 	Visao *gui = new Visao;
-	std::string FOLDER_PATH = "livros/";
+	std::string FOLDER_PATH = "normalizedLivros/";
  public:
 	void preencherArvores();
 	void efetuarPesquisa(); // Método p/ selecionar o tipo de Pesquisa.

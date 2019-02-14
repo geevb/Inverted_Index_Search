@@ -12,17 +12,19 @@ void Sistema::preencherArvores() {
     
     dir = opendir (PATH.c_str());
     if (dir != NULL) {
+
+		std::time_t timeStart = std::time(nullptr);
         while ((ent = readdir (dir)) != NULL) {
-        	// Remover extensão do arquivo manpage.
+        	// Remover extensão do arquivo.
         	std::string nomeComando = removerExtensao(ent->d_name);
             switch (ent->d_type) {
             case DT_REG:
             {
 
-                // Preenchendo Árvore principal com os nomes dos comandos.
+                // Preenchendo Árvore principal com os nomes dos arquivos.
                 arvoreB->insert(std::pair<std::string, std::string>(nomeComando, ent->d_name));
 
-                // Preenchendo Árvore secundária com as palavras de cada manpage.
+                // Preenchendo Árvore secundária com as palavras de cada arquivo.
                 std::string local_arquivo = PATH + (std::string)ent->d_name;
             	arquivo.open(local_arquivo);
             	if (!arquivo.is_open()) { std::cout << "Arquivo não foi aberto!"; exit(1); }
@@ -35,7 +37,7 @@ void Sistema::preencherArvores() {
             			std::list<std::string> lista_arquivos;
             			lista_arquivos.push_back((std::string)ent->d_name);
             			arvoreBS->insert(std::pair< std::string, std::list<std::string> >(palavra, lista_arquivos));
-            		} else { // Se encontrar o nodo, apenas inserir o nome da página no final da lista do nodo.
+            		} else { // Se encontrar o nodo, apenas inserir o nome do arquivo no final da lista do nodo.
             			it->second.push_back((std::string)ent->d_name);
             		}           
            		}
@@ -54,7 +56,8 @@ void Sistema::preencherArvores() {
                 it->second.unique();
         }
 
-        std::cout << "Preenchimento Finalizado! \n";
+		std::time_t timeEnd = std::time(nullptr);
+        std::cout << "Preenchimento Finalizado! Tempo Total: " + std::to_string(timeEnd - timeStart) + "s.\n";
         std::cout << "Tamanho Arv. Primaria: " << arvoreB->size() << std::endl;
         std::cout << "Tamanho Arv. Secundaria: " << arvoreBS->size() << std::endl;
         closedir (dir);
@@ -102,7 +105,7 @@ void Sistema::pesquisarChavePrimaria(std::string chavePrimaria) {
     	}
 	}
 	nome_arquivo.close();
-	if (!achou_palavra) std::cout << "ManPage não encontrada! \n";
+	if (!achou_palavra) std::cout << "Arquivo não encontrado! \n";
 }
 
 
@@ -115,7 +118,7 @@ void Sistema::pesquisarChaveSecundaria(std::string chaveSecundaria) {
 	while(getline(nome_arquivo, linha)) {
 		std::string primeira_palavra = linha.substr(0, linha.find(" "));
 		if (primeira_palavra == chaveSecundaria){
-			std::cout << "Páginas que contém a palavra: " << chaveSecundaria << std::endl;
+			std::cout << "Arquivos que contém a palavra: " << chaveSecundaria << std::endl;
     		if (linha.find(chaveSecundaria, 0) != std::string::npos) {
     			std::cout << linha << std::endl;
         		achou_palavra = true;
